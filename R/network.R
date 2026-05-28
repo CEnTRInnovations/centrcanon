@@ -49,6 +49,13 @@ create_network <- function(edgelist) {
 #'     \item{community}{factor. Optimal-modularity community membership.}
 #'   }
 #'
+#' @examples
+#' \dontrun{
+#' el <- tibble::tibble(from = c("a", "b", "a"), to = c("b", "c", "c"))
+#' g  <- create_network(el)
+#' calculate_network_metrics(g)
+#' }
+#'
 #' @export
 calculate_network_metrics <- function(graph) {
   g <- graph

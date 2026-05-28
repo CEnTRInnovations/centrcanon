@@ -39,3 +39,17 @@ test_that("calculate_network_metrics returns NA columns with warning when centis
   expect_true(all(is.na(metrics$cbet)))
   expect_true(all(is.na(metrics$katz)))
 })
+
+test_that("integration pipeline handles a disconnected graph", {
+  skip_if_not_installed("igraph")
+  # Two isolated edges: {a-b} and {c-d} — no path between the two components.
+  g <- create_network(tibble::tibble(
+    from = c("a", "c"),
+    to   = c("b", "d")
+  ))
+  expect_no_error({
+    result <- calculate_integration_score(calculate_network_metrics(g))
+  })
+  expect_true(all(result$integration_score >= 0, na.rm = TRUE))
+  expect_true(all(result$integration_score <= 1, na.rm = TRUE))
+})
