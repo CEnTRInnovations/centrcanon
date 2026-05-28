@@ -27,3 +27,11 @@ make_ca_pam <- function(k = 2L) {
   pam <- run_pam_clustering(ca, k = k)
   list(ca = ca, pam = pam)
 }
+
+#' Two isolated edges {a-b} and {c-d} — no path between the two components
+make_disconnected_graph <- function() {
+  create_network(tibble::tibble(
+    from = c("a", "c"),
+    to   = c("b", "d")
+  ))
+}

@@ -51,7 +51,10 @@ create_network <- function(edgelist) {
 #'
 #' @examples
 #' \dontrun{
-#' el <- tibble::tibble(from = c("a", "b", "a"), to = c("b", "c", "c"))
+#' el <- tibble::tibble(
+#'   from = c("a", "b", "a"),
+#'   to   = c("b", "c", "c")
+#' )
 #' g  <- create_network(el)
 #' calculate_network_metrics(g)
 #' }
