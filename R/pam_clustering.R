@@ -22,5 +22,6 @@
 #' @export
 run_pam_clustering <- function(ca_result, k = 6L) {
   coords <- ca_result$col$coord[, 1:2, drop = FALSE]
-  cluster::pam(coords, k = as.integer(k))
+  k      <- min(as.integer(k), nrow(coords) - 1L)  # pam requires k < n
+  cluster::pam(coords, k = k)
 }
