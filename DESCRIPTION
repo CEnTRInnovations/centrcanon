@@ -1,0 +1,39 @@
+Package: centrcanon
+Title: Analytical Engine for CEnTR*MAP Community-Engaged Research Mapping
+Version: 0.1.0
+Authors@R:
+    person("Jeremy", "Price",
+           email = "jfprice@iu.edu",
+           role  = c("aut", "cre"))
+Description: Provides the core analytical pipelines for CEnTR*MAP, a workflow
+    for mapping the conceptual landscape of community-engaged research (CEnR).
+    Implements three complementary pipelines: anchoring (correspondence
+    analysis and PAM clustering), integration (network centrality), and
+    leverage (key actor classification). The package is designed to be called
+    from a Shiny application but works entirely from the R console.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3
+Imports:
+    dplyr,
+    tidyr,
+    tibble,
+    rlang,
+    FactoMineR,
+    cluster,
+    igraph,
+    stats
+Suggests:
+    centiserve,
+    expm,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    ggplot2,
+    ggrepel,
+    ggraph
+VignetteBuilder: knitr
+URL: https://github.com/centrcanon/centrcanon
+BugReports: https://github.com/centrcanon/centrcanon/issues
+Config/roxygen2/version: 8.0.0

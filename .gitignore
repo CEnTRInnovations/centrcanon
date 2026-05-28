@@ -1,0 +1,19 @@
+# R build artifacts
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.o
+*.so
+*.dll
+*.Rcheck/
+
+# Generated docs (keep man/ and NAMESPACE since they're checked in for CRAN)
+# inst/doc/ is generated at build time
+inst/doc/
+
+# macOS
+.DS_Store
+
+# devtools / pkgdown
+docs/
