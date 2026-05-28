@@ -30,3 +30,14 @@ Metrics from the \code{centiserve} package (\code{crossclique}, \code{cflow}, \c
 \code{katz}) are optional; if the package is not installed those columns are set
 to \code{NA_real_} with a warning.
 }
+\examples{
+\dontrun{
+el <- tibble::tibble(
+  from = c("a", "b", "a"),
+  to   = c("b", "c", "c")
+)
+g  <- create_network(el)
+calculate_network_metrics(g)
+}
+
+}

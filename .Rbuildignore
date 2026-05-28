@@ -1,0 +1,9 @@
+^CLAUDE\.md$
+^Makefile$
+^\.Rbuildignore$
+^data-raw$
+^\.github$
+^renv$
+^renv\.lock$
+^.*\.Rproj$
+^\.Rproj\.user$
