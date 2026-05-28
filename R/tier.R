@@ -23,8 +23,8 @@ calculate_tier <- function(scores) {
   raw_breaks <- stats::quantile(
     scores, probs = c(0.4, 0.6, 0.8), na.rm = TRUE, type = 1
   )
-  # Guard: duplicate breaks crash cut() when percentiles coincide on tied data.
-  breaks <- unique(c(-Inf, raw_breaks, Inf))
+  # Guard: duplicate or non-finite breaks (e.g. all-NA input) crash cut().
+  breaks <- unique(c(-Inf, raw_breaks[is.finite(raw_breaks)], Inf))
   n_intervals <- length(breaks) - 1L
   labels <- tier_labels[
     (length(tier_labels) - n_intervals + 1L):length(tier_labels)
