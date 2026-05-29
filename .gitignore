@@ -17,3 +17,7 @@ inst/doc/
 
 # devtools / pkgdown
 docs/
+
+.claude
+Makefile
+CLAUDE.md

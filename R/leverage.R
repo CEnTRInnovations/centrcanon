@@ -10,6 +10,7 @@
 # @return A character scalar role name.
 # @noRd
 classify_node_role <- function(eigen_z, cbet_z, katz_z, q25, q75, q90) {
+  if (anyNA(c(eigen_z, cbet_z, katz_z))) return("Leaning")
   vals <- c(eigen_z, cbet_z, katz_z)
 
   above90 <- vals >= c(q90[["eigen"]], q90[["cbet"]], q90[["katz"]])
@@ -98,7 +99,7 @@ calculate_leverage_score <- function(network_metrics_tbl) {
     )
 
   # Dataset-level quantile thresholds for role classification
-  q <- function(col, p) stats::quantile(col, probs = p, na.rm = TRUE)
+  q <- function(col, p) unname(stats::quantile(col, probs = p, na.rm = TRUE))
   q25 <- c(eigen = q(tbl$eigen_z, 0.25),
            cbet  = q(tbl$cbet_z,  0.25),
            katz  = q(tbl$katz_z,  0.25))

@@ -1,3 +1,7 @@
+# Suppress R CMD check NOTE for the .data pronoun used across the package.
+#' @importFrom rlang .data
+NULL
+
 #' Min-max scale a numeric vector
 #'
 #' Normalizes a numeric vector to the \[0, 1\] range using min-max scaling.
@@ -13,6 +17,7 @@
 #'
 #' @export
 minmax_scale <- function(x) {
+  if (all(is.na(x))) return(rep(NA_real_, length(x)))
   rng <- range(x, na.rm = TRUE)
   if (rng[1] == rng[2]) return(rep(0.5, length(x)))
   (x - rng[1]) / (rng[2] - rng[1])

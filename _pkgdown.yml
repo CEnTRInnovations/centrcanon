@@ -1,0 +1,66 @@
+url: https://centrcanon.github.io/centrcanon
+
+template:
+  bootstrap: 5
+
+home:
+  title: "centrcanon"
+  description: >
+    Analytical engine for CEnTR*MAP — a workflow for mapping the conceptual
+    landscape of community-engaged research.
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/centrcanon/centrcanon
+      aria-label: GitHub
+
+reference:
+  - title: "Pipeline 1 — Anchoring"
+    desc: >
+      Identify which concepts are most central to how a community
+      talks about CEnR via correspondence analysis and PAM clustering.
+    contents:
+      - prepare_contingency_table
+      - run_correspondence_analysis
+      - run_pam_clustering
+      - calculate_anchoring_score
+
+  - title: "Pipeline 2 — Integration"
+    desc: >
+      Identify structural connectors across the concept network
+      using a suite of centrality measures.
+    contents:
+      - create_network
+      - calculate_network_metrics
+      - calculate_integration_score
+
+  - title: "Pipeline 3 — Leverage"
+    desc: >
+      Identify influential concepts and classify each node into
+      one of eleven leverage roles.
+    contents:
+      - calculate_leverage_score
+
+  - title: "Utilities"
+    desc: Shared normalization and ranking helpers.
+    contents:
+      - minmax_scale
+      - dense_rank_normalize
+      - calculate_entropy
+      - calculate_tier
+
+  - title: "Color palettes"
+    contents:
+      - centr_earthtone_palette
+      - centr_layer_palette
+
+articles:
+  - title: "Getting started"
+    navbar: ~
+    contents:
+      - centr-pipeline

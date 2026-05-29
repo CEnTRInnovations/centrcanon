@@ -16,19 +16,18 @@ A tibble with one row per node and columns:
 \item{name}{character. Node name.}
 \item{degree}{double. Normalized degree centrality.}
 \item{betweenness}{double. Normalized betweenness centrality.}
-\item{crossclique}{double. Cross-clique centrality (centiserve).}
-\item{cflow}{double. Current-flow closeness centrality (centiserve).}
-\item{cbet}{double. Communicability betweenness centrality (centiserve).}
+\item{crossclique}{double. Cross-clique centrality.}
+\item{cflow}{double. Current-flow closeness centrality.}
+\item{cbet}{double. Communicability betweenness centrality (normalized).}
 \item{eigen}{double. Eigenvector centrality.}
-\item{katz}{double. Katz centrality (centiserve).}
+\item{katz}{double. Katz centrality.}
 \item{community}{factor. Optimal-modularity community membership.}
 }
 }
 \description{
 Computes a suite of node-level centrality measures for an undirected graph.
-Metrics from the \code{centiserve} package (\code{crossclique}, \code{cflow}, \code{cbet},
-\code{katz}) are optional; if the package is not installed those columns are set
-to \code{NA_real_} with a warning.
+All metrics are computed using \code{igraph} and base R; no optional packages
+are required.
 }
 \examples{
 \dontrun{

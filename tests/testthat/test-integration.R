@@ -25,19 +25,14 @@ test_that("integration_score tier is an ordered factor", {
   expect_s3_class(result$tier, "ordered")
 })
 
-test_that("calculate_network_metrics returns NA columns with warning when centiserve absent", {
+test_that("calculate_network_metrics returns finite values for all four derived metrics", {
   skip_if_not_installed("igraph")
-  skip_if(requireNamespace("centiserve", quietly = TRUE),
-          "centiserve is installed; skipping absent-path test")
-  g <- make_graph()
-  expect_warning(
-    metrics <- calculate_network_metrics(g),
-    regexp = "centiserve"
-  )
-  expect_true(all(is.na(metrics$crossclique)))
-  expect_true(all(is.na(metrics$cflow)))
-  expect_true(all(is.na(metrics$cbet)))
-  expect_true(all(is.na(metrics$katz)))
+  g       <- make_graph()
+  metrics <- calculate_network_metrics(g)
+  expect_true(all(is.finite(metrics$crossclique)))
+  expect_true(all(is.finite(metrics$cflow)))
+  expect_true(all(is.finite(metrics$cbet)))
+  expect_true(all(is.finite(metrics$katz)))
 })
 
 test_that("integration pipeline handles a disconnected graph", {

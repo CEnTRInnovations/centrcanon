@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-`centrcanon` provides the analytical engine for **CEnTR\*MAP**, a workflow that
+`centrcanon` provides the analytical engine for the **CEnTR\*CANON Toolkit**, a workflow that
 supports institutions and communities in collaboratively constructing a **local
 definition of community-engaged research (CEnR)**.
 
@@ -106,14 +106,6 @@ metrics <- calculate_network_metrics(g)
 # Integration scores
 integration <- calculate_integration_score(metrics)
 integration
-```
-
-`crossclique`, `cflow`, `cbet`, and `katz` require the `centiserve` package
-(not on CRAN). If it is not installed, those columns are `NA` with a warning.
-Install it with:
-
-```r
-remotes::install_github("muuankarski/centiserve")
 ```
 
 ---
