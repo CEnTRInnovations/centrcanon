@@ -1,0 +1,69 @@
+Provides the core analytical pipelines for CEnTR\*MAP, a workflow for
+mapping the conceptual landscape of community-engaged research (CEnR).
+Implements three complementary pipelines: anchoring (correspondence
+analysis and PAM clustering), integration (network centrality), and
+leverage (key actor classification). The package is designed to be
+called from a Shiny application but works entirely from the R console.
+
+# Package index
+
+## Pipeline 1 — Anchoring
+
+Identify which concepts are most central to how a community talks about
+CEnR via correspondence analysis and PAM clustering.
+
+- [`prepare_contingency_table()`](https://centrcanon.github.io/centrcanon/reference/prepare_contingency_table.md)
+  : Prepare a contingency table from an edgelist
+- [`run_correspondence_analysis()`](https://centrcanon.github.io/centrcanon/reference/run_correspondence_analysis.md)
+  : Run correspondence analysis on a contingency table
+- [`run_pam_clustering()`](https://centrcanon.github.io/centrcanon/reference/run_pam_clustering.md)
+  : Run PAM clustering on CA column coordinates
+- [`calculate_anchoring_score()`](https://centrcanon.github.io/centrcanon/reference/calculate_anchoring_score.md)
+  : Calculate conceptual anchoring scores
+
+## Pipeline 2 — Integration
+
+Identify structural connectors across the concept network using a suite
+of centrality measures.
+
+- [`create_network()`](https://centrcanon.github.io/centrcanon/reference/create_network.md)
+  : Create an undirected network graph from an edgelist
+- [`calculate_network_metrics()`](https://centrcanon.github.io/centrcanon/reference/calculate_network_metrics.md)
+  : Calculate network centrality metrics
+- [`calculate_integration_score()`](https://centrcanon.github.io/centrcanon/reference/calculate_integration_score.md)
+  : Calculate integration scores from network metrics
+
+## Pipeline 3 — Leverage
+
+Identify influential concepts and classify each node into one of eleven
+leverage roles.
+
+- [`calculate_leverage_score()`](https://centrcanon.github.io/centrcanon/reference/calculate_leverage_score.md)
+  : Calculate leverage scores and classify node roles
+
+## Utilities
+
+Shared normalization and ranking helpers.
+
+- [`minmax_scale()`](https://centrcanon.github.io/centrcanon/reference/minmax_scale.md)
+  : Min-max scale a numeric vector
+- [`dense_rank_normalize()`](https://centrcanon.github.io/centrcanon/reference/dense_rank_normalize.md)
+  : Dense-rank normalize a numeric vector
+- [`calculate_entropy()`](https://centrcanon.github.io/centrcanon/reference/calculate_entropy.md)
+  : Normalized Shannon entropy
+- [`calculate_tier()`](https://centrcanon.github.io/centrcanon/reference/calculate_tier.md)
+  : Classify scores into performance tiers
+
+## Color palettes
+
+- [`centr_earthtone_palette()`](https://centrcanon.github.io/centrcanon/reference/centr_earthtone_palette.md)
+  : Earthtone color palette for CEnTR\*MAP
+- [`centr_layer_palette()`](https://centrcanon.github.io/centrcanon/reference/centr_layer_palette.md)
+  : Three-layer color palette for CEnTR\*MAP analytical pipelines
+
+# Articles
+
+### Getting started
+
+- [The CEnTR\*MAP Analytical
+  Pipeline](https://centrcanon.github.io/centrcanon/articles/centr-pipeline.md):

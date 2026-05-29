@@ -15,8 +15,6 @@ inst/doc/
 # macOS
 .DS_Store
 
-# devtools / pkgdown
-docs/
 
 .claude
 Makefile
