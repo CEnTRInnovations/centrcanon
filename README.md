@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
-`centrcanon` is the analytical engine for **CEnTR\*MAP** — a workflow that
+`centrcanon` is the analytical engine for the **CEnTR\*CANON Toolkit** — a workflow that
 supports institutions and communities in collaboratively constructing a **local
 definition of community-engaged research (CEnR)**.
 
