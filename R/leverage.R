@@ -62,7 +62,8 @@ calculate_leverage_score <- function(network_metrics_tbl) {
 
   tbl <- network_metrics_tbl |>
     dplyr::mutate(
-      eigen_centrality = minmax_scale(.data$eigen)
+      eigen_centrality = minmax_scale(.data$eigen),
+      degree_scaled    = minmax_scale(.data$degree)
     )
 
   deg_med   <- stats::median(tbl$degree, na.rm = TRUE)
@@ -71,7 +72,7 @@ calculate_leverage_score <- function(network_metrics_tbl) {
   tbl |>
     dplyr::mutate(
       leverage_score    = minmax_scale(
-        .data$degree + .data$eigen_centrality
+        .data$degree_scaled + .data$eigen_centrality
       ),
       tier              = calculate_tier(.data$leverage_score),
       leverage_quadrant = factor(
@@ -80,5 +81,6 @@ calculate_leverage_score <- function(network_metrics_tbl) {
         ),
         levels = quadrant_levels
       )
-    )
+    ) |>
+    dplyr::select(-"degree_scaled")
 }

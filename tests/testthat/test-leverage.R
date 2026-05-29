@@ -99,3 +99,15 @@ test_that("classify_leverage_quadrant: vectorized over multiple nodes", {
     "Community Voice", "Emerging Vocabulary"
   ))
 })
+
+test_that("leverage_score is in [0, 1] for a complete graph (constant degree)", {
+  skip_if_not_installed("igraph")
+  # 4-node complete graph: all nodes have identical degree
+  g <- create_network(tibble::tibble(
+    from = c("a", "a", "a", "b", "b", "c"),
+    to   = c("b", "c", "d", "c", "d", "d")
+  ))
+  result <- calculate_leverage_score(calculate_network_metrics(g))
+  expect_true(all(result$leverage_score >= 0, na.rm = TRUE))
+  expect_true(all(result$leverage_score <= 1, na.rm = TRUE))
+})
