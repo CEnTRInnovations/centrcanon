@@ -1,85 +1,49 @@
-# Classify a single node into a leverage role.
+# Classify nodes into leverage quadrants based on degree and eigenvector
+# centrality. Nodes at or above the median on an axis are treated as "high".
+# Vectorized — all four arguments may be equal-length vectors or length-1
+# scalars.
 #
-# Internal helper. Quantile thresholds are passed as arguments so that tests
-# can inject known values without needing a full dataset.
+# @param degree,eigen_centrality Numeric vectors. Normalized centrality values.
+# @param degree_median,eigen_median Numeric scalars. Median thresholds.
 #
-# @param eigen_z,cbet_z,katz_z Normalized centrality values for one node.
-# @param q25,q75,q90 Named numeric vectors with elements `eigen`, `cbet`,
-#   `katz` giving the dataset-level quantile thresholds.
-#
-# @return A character scalar role name.
+# @return Character vector of quadrant labels, same length as `degree`.
 # @noRd
-classify_node_role <- function(eigen_z, cbet_z, katz_z, q25, q75, q90) {
-  if (anyNA(c(eigen_z, cbet_z, katz_z))) return("Leaning")
-  vals <- c(eigen_z, cbet_z, katz_z)
-
-  above90 <- vals >= c(q90[["eigen"]], q90[["cbet"]], q90[["katz"]])
-  above75 <- vals >= c(q75[["eigen"]], q75[["cbet"]], q75[["katz"]])
-  below25 <- vals <= c(q25[["eigen"]], q25[["cbet"]], q25[["katz"]])
-
-  entropy_ratio <- calculate_entropy(vals)
-
-  # Determine the paired type when two or all three are above q75.
-  # Order of precedence: eigen+katz -> Beacon, eigen+cbet -> Steward,
-  # cbet+katz -> Aqueduct, else Hybrid.
-  paired_type <- function(flags) {
-    if (flags[[1]] && flags[[3]]) "Beacon"
-    else if (flags[[1]] && flags[[2]]) "Steward"
-    else if (flags[[2]] && flags[[3]]) "Aqueduct"
-    else "Hybrid"
-  }
-
-  if (all(above90)) {
-    "Core Keystone"
-  } else if (all(above75) && entropy_ratio >= 0.9) {
-    "Supporting Keystone"
-  } else if (all(above75) && entropy_ratio < 0.9) {
-    paired_type(above75)
-  } else if (all(below25)) {
-    "Non-Key"
-  } else {
-    n_high <- sum(above75)
-    if (n_high == 1L) {
-      c("Sage", "Weaver", "Messenger")[which(above75)[1L]]
-    } else if (n_high >= 2L) {
-      paired_type(above75)
-    } else {
-      "Leaning"
-    }
-  }
+classify_leverage_quadrant <- function(degree, eigen_centrality,
+                                       degree_median, eigen_median) {
+  high_degree <- degree >= degree_median
+  high_eigen  <- eigen_centrality >= eigen_median
+  dplyr::case_when(
+    high_degree  & high_eigen  ~ "Shared Foundation",
+    !high_degree & high_eigen  ~ "Connective Concept",
+    high_degree  & !high_eigen ~ "Community Voice",
+    TRUE                       ~ "Emerging Vocabulary"
+  )
 }
 
 
-#' Calculate leverage scores and classify node roles
+#' Calculate leverage scores and classify nodes into quadrants
 #'
-#' Derives a leverage score for each node by combining eigenvector centrality,
-#' communicability betweenness (`cbet`), and Katz centrality via dense ranking
-#' and min-max normalization. Each node is also classified into one of eleven
-#' leverage roles based on how its centrality profile compares to the rest of
-#' the network.
-#'
-#' Quantile thresholds used in role classification are computed over all nodes
-#' in the supplied data, not hardcoded.
+#' Derives a leverage score for each node from degree and eigenvector
+#' centrality, then classifies each node into one of four CEnR-grounded
+#' structural roles using a Degree x Eigenvector quadrant analysis.
+#' Quadrant thresholds are the medians of each axis across all nodes in the
+#' supplied data.
 #'
 #' @param network_metrics_tbl A tibble as returned by
-#'   [calculate_network_metrics()], containing at minimum columns `eigen`,
-#'   `cbet`, and `katz`.
+#'   [calculate_network_metrics()], containing at minimum columns `degree`
+#'   and `eigen`.
 #'
 #' @return The input tibble augmented with columns:
 #'   \describe{
-#'     \item{eigen_z}{double. Min-max scaled eigenvector centrality.}
-#'     \item{katz_z}{double. Min-max scaled Katz centrality.}
-#'     \item{cbet_z}{double. Min-max scaled communicability betweenness.}
-#'     \item{rank_eigen}{integer. Dense rank of `eigen_z`.}
-#'     \item{rank_katz}{integer. Dense rank of `katz_z`.}
-#'     \item{rank_cbet}{integer. Dense rank of `cbet_z`.}
-#'     \item{rank_sum}{integer. Sum of the three ranks.}
-#'     \item{leverage_score}{double. Normalized to \[0, 1\].}
+#'     \item{eigen_centrality}{double. Min-max scaled eigenvector centrality,
+#'       in \[0, 1\].}
+#'     \item{leverage_score}{double. Min-max scaled sum of normalized degree
+#'       and `eigen_centrality`, in \[0, 1\]. Used for tier assignment.}
 #'     \item{tier}{ordered factor. From [calculate_tier()].}
-#'     \item{node_role}{factor. One of `"Core Keystone"`,
-#'       `"Supporting Keystone"`, `"Beacon"`, `"Steward"`, `"Aqueduct"`,
-#'       `"Hybrid"`, `"Sage"`, `"Weaver"`, `"Messenger"`, `"Leaning"`,
-#'       `"Non-Key"`.}
+#'     \item{leverage_quadrant}{factor. One of `"Shared Foundation"`,
+#'       `"Connective Concept"`, `"Community Voice"`,
+#'       `"Emerging Vocabulary"`. Quadrant thresholds are the medians of
+#'       each axis.}
 #'   }
 #'
 #' @examples
@@ -91,49 +55,30 @@ classify_node_role <- function(eigen_z, cbet_z, katz_z, q25, q75, q90) {
 #'
 #' @export
 calculate_leverage_score <- function(network_metrics_tbl) {
+  quadrant_levels <- c(
+    "Shared Foundation", "Connective Concept",
+    "Community Voice", "Emerging Vocabulary"
+  )
+
   tbl <- network_metrics_tbl |>
     dplyr::mutate(
-      eigen_z = minmax_scale(.data$eigen),
-      katz_z  = minmax_scale(.data$katz),
-      cbet_z  = minmax_scale(.data$cbet)
+      eigen_centrality = minmax_scale(.data$eigen)
     )
 
-  # Dataset-level quantile thresholds for role classification
-  q <- function(col, p) unname(stats::quantile(col, probs = p, na.rm = TRUE))
-  q25 <- c(eigen = q(tbl$eigen_z, 0.25),
-           cbet  = q(tbl$cbet_z,  0.25),
-           katz  = q(tbl$katz_z,  0.25))
-  q75 <- c(eigen = q(tbl$eigen_z, 0.75),
-           cbet  = q(tbl$cbet_z,  0.75),
-           katz  = q(tbl$katz_z,  0.75))
-  q90 <- c(eigen = q(tbl$eigen_z, 0.90),
-           cbet  = q(tbl$cbet_z,  0.90),
-           katz  = q(tbl$katz_z,  0.90))
-
-  node_roles <- mapply(
-    FUN      = classify_node_role,
-    eigen_z  = tbl$eigen_z,
-    cbet_z   = tbl$cbet_z,
-    katz_z   = tbl$katz_z,
-    MoreArgs = list(q25 = q25, q75 = q75, q90 = q90),
-    USE.NAMES = FALSE
-  )
-
-  role_levels <- c(
-    "Core Keystone", "Supporting Keystone",
-    "Beacon", "Steward", "Aqueduct", "Hybrid",
-    "Sage", "Weaver", "Messenger",
-    "Leaning", "Non-Key"
-  )
+  deg_med   <- stats::median(tbl$degree, na.rm = TRUE)
+  eigen_med <- stats::median(tbl$eigen_centrality, na.rm = TRUE)
 
   tbl |>
     dplyr::mutate(
-      rank_eigen     = dplyr::dense_rank(.data$eigen_z),
-      rank_katz      = dplyr::dense_rank(.data$katz_z),
-      rank_cbet      = dplyr::dense_rank(.data$cbet_z),
-      rank_sum       = .data$rank_eigen + .data$rank_katz + .data$rank_cbet,
-      leverage_score = minmax_scale(.data$rank_sum),
-      tier           = calculate_tier(.data$leverage_score),
-      node_role      = factor(node_roles, levels = role_levels)
+      leverage_score    = minmax_scale(
+        .data$degree + .data$eigen_centrality
+      ),
+      tier              = calculate_tier(.data$leverage_score),
+      leverage_quadrant = factor(
+        classify_leverage_quadrant(
+          .data$degree, .data$eigen_centrality, deg_med, eigen_med
+        ),
+        levels = quadrant_levels
+      )
     )
 }

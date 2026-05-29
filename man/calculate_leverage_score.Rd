@@ -2,43 +2,35 @@
 % Please edit documentation in R/leverage.R
 \name{calculate_leverage_score}
 \alias{calculate_leverage_score}
-\title{Calculate leverage scores and classify node roles}
+\title{Calculate leverage scores and classify nodes into quadrants}
 \usage{
 calculate_leverage_score(network_metrics_tbl)
 }
 \arguments{
 \item{network_metrics_tbl}{A tibble as returned by
-\code{\link[=calculate_network_metrics]{calculate_network_metrics()}}, containing at minimum columns \code{eigen},
-\code{cbet}, and \code{katz}.}
+\code{\link[=calculate_network_metrics]{calculate_network_metrics()}}, containing at minimum columns \code{degree}
+and \code{eigen}.}
 }
 \value{
 The input tibble augmented with columns:
 \describe{
-\item{eigen_z}{double. Min-max scaled eigenvector centrality.}
-\item{katz_z}{double. Min-max scaled Katz centrality.}
-\item{cbet_z}{double. Min-max scaled communicability betweenness.}
-\item{rank_eigen}{integer. Dense rank of \code{eigen_z}.}
-\item{rank_katz}{integer. Dense rank of \code{katz_z}.}
-\item{rank_cbet}{integer. Dense rank of \code{cbet_z}.}
-\item{rank_sum}{integer. Sum of the three ranks.}
-\item{leverage_score}{double. Normalized to [0, 1].}
+\item{eigen_centrality}{double. Min-max scaled eigenvector centrality,
+in [0, 1].}
+\item{leverage_score}{double. Min-max scaled sum of normalized degree
+and \code{eigen_centrality}, in [0, 1]. Used for tier assignment.}
 \item{tier}{ordered factor. From \code{\link[=calculate_tier]{calculate_tier()}}.}
-\item{node_role}{factor. One of \code{"Core Keystone"},
-\code{"Supporting Keystone"}, \code{"Beacon"}, \code{"Steward"}, \code{"Aqueduct"},
-\code{"Hybrid"}, \code{"Sage"}, \code{"Weaver"}, \code{"Messenger"}, \code{"Leaning"},
-\code{"Non-Key"}.}
+\item{leverage_quadrant}{factor. One of \code{"Shared Foundation"},
+\code{"Connective Concept"}, \code{"Community Voice"},
+\code{"Emerging Vocabulary"}. Quadrant thresholds are the medians of
+each axis.}
 }
 }
 \description{
-Derives a leverage score for each node by combining eigenvector centrality,
-communicability betweenness (\code{cbet}), and Katz centrality via dense ranking
-and min-max normalization. Each node is also classified into one of eleven
-leverage roles based on how its centrality profile compares to the rest of
-the network.
-}
-\details{
-Quantile thresholds used in role classification are computed over all nodes
-in the supplied data, not hardcoded.
+Derives a leverage score for each node from degree and eigenvector
+centrality, then classifies each node into one of four CEnR-grounded
+structural roles using a Degree x Eigenvector quadrant analysis.
+Quadrant thresholds are the medians of each axis across all nodes in the
+supplied data.
 }
 \examples{
 \dontrun{
